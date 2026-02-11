@@ -1,4 +1,4 @@
-#include "TComplejo.hpp"
+#include "tcomplejo.h"
 
 TComplejo::TComplejo()
 {
@@ -22,6 +22,12 @@ TComplejo::TComplejo(const TComplejo& other)
 {
     re = other.re;
     im = other.im;
+}
+
+TComplejo::~TComplejo()
+{
+    re = 0;
+    im = 0;
 }
 
 TComplejo& TComplejo::operator=(const TComplejo& other)
