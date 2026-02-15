@@ -33,18 +33,16 @@
   (modulo (+ indice desplazamiento) 26))
 
 (define (cifra-caracter char desplazamiento)
-  (cond [(entre-az? char)
-         (encuentra-caracter (rota-indice (encuentra-indice char) desplazamiento))]
-        [(entre-AZ? char)
-         (encuentra-caracter-mayuscula (rota-indice (encuentra-indice-mayuscula char) desplazamiento))]
-        [else char]))
+ (cond ((entre-az? char)
+       (encuentra-caracter (rota-indice (encuentra-indice char) desplazamiento)))
+       (entre-AZ? char
+       (encuentra-caracter-mayuscula (rota-indice (encuentra-indice-mayuscula char) desplazamiento)))
+        (else char)))
      
 (define (descifra-caracter char desplazamiento)
-  (cond [(entre-az? char)
-         (encuentra-caracter (rota-indice (encuentra-indice char) (- desplazamiento)))]
-        [(entre-AZ? char)
-         (encuentra-caracter-mayuscula (rota-indice (encuentra-indice-mayuscula char) (- desplazamiento)))]
-        [else char]))
+  (if (or(entre-az? char) (entre-AZ? char))
+  (encuentra-caracter(- (encuentra-indice char) desplazamiento))
+  char))
 
 ;Ejercicio 3
 (define (menor-de-tres n1 n2 n3)
