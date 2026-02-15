@@ -66,6 +66,6 @@ dkms.conf
 *.vsix
 
 # Para ADA
-.png
-.CPUtimes
-.log
+*.png
+*.CPUtimes
+*.log
