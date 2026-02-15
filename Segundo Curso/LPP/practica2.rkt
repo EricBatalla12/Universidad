@@ -1,0 +1,164 @@
+#lang racket
+;Ejercicio 1
+(define (binario-a-decimal b3 b2 b1 b0)
+  (+(* b3 (expt 2 3)) (* b2 (expt 2 2)) (* b1 (expt 2 1)) (* b0 (expt 2 0))))
+
+(define (binario-a-hexadecimal b3 b2 b1 b0)
+  (cond ((<= (binario-a-decimal b3 b2 b1 b0) 9)
+         (integer->char(+ (binario-a-decimal b3 b2 b1 b0) (char->integer #\0))))
+         (else (integer->char(+ (-(binario-a-decimal b3 b2 b1 b0) 10) (char->integer #\A))))))
+         ;El 10 es para calcular el desplazamiento desde #\A hasta el número deseado, de A a A 0, de A a F 5.
+         
+;Ejercicio 2
+(define (encuentra-indice char)
+  (- (char->integer char) (char->integer #\a)))
+
+(define (encuentra-indice-mayuscula char)
+  (- (char->integer char) (char->integer #\A)))
+
+(define (encuentra-caracter indice)
+  (integer->char(+ indice (char->integer #\a))))
+
+(define (encuentra-caracter-mayuscula indice)
+  (integer->char(+ indice (char->integer #\A))))
+
+(define (entre-az? c)
+  (and (char<=? c #\z) (char>=? c #\a)))
+
+(define (entre-AZ? c)
+  (and (char<=? c #\Z) (char>=? c #\A)))
+
+(define (rota-indice indice desplazamiento)
+  (modulo (+ indice desplazamiento) 26))
+
+(define (cifra-caracter char desplazamiento)
+ (cond ((entre-az? char)
+       (encuentra-caracter (rota-indice (encuentra-indice char) desplazamiento)))
+       (entre-AZ? char
+       (encuentra-caracter-mayuscula (rota-indice (encuentra-indice-mayuscula char) desplazamiento)))
+        (else char)))
+     
+(define (descifra-caracter char desplazamiento)
+  (if (or(entre-az? char) (entre-AZ? char))
+  (encuentra-caracter(- (encuentra-indice char) desplazamiento))
+  char))
+
+;Ejercicio 3
+(define (menor-de-tres n1 n2 n3)
+  (if (and (< n1 n2) (< n2 n3))
+      n1
+      (if (and (< n2 n1) (< n2 n3))
+          n2
+          n3)))
+
+(define (menor x y)
+  (if (< x y)
+      x
+      y))
+
+(define (menor-de-tresv2 n1 n2 n3)
+  (menor n1 (menor n2 n3)))
+        
+;Ejercicio 4
+
+  ;Apartado a)
+(define (f x)
+    (cons x 2))
+
+(define (g x y)
+    (cons x y))
+   ;(g (f (+ 2 1)) (+ 1 1)) (Orden normal)
+   ;(cons (f (+ 2 1)) (+ 1 1))
+   ;(cons (cons (+ 2 1) 2) (+ 1 1))
+   ;(cons (cons 3 2) 2)
+   ;((3 . 2) . 2)
+
+   ;(g (f (+ 2 1)) (+ 1 1)) (Orden aplicativo)
+   ;(g (f 3) (+ 1 1))
+   ;(g (f 3) 2)
+   ;(g (3 . 2) 2)
+   ;((3 . 2) . 2)
+
+
+  ;Apartado b)
+
+(define (func-1 x)
+    (/ x 0))
+
+(define (func-2 x y)
+    (if (= x 0)
+        0
+        y))
+   ;(func-2 0 (func-1 10)) (Orden normal)
+   ;(if (= 0 0) 0 (func-1 10))
+   ;(= 0 0)#t
+   ;0
+
+   ;(func-2 0 (func-1 10)) (Orden aplicativo)
+   ;(0 (func-1 10)
+   ;Error al dividir entre 0
+
+;Ejercicio 5
+
+(define (cadenas-mayores lista1 lista2)
+ (list (if (< (string-length (first lista1)) (string-length (first lista2)))
+           (first lista2)
+           (first lista1))
+        (if (< (string-length (second lista1)) (string-length (second lista2)))
+           (second lista2)
+           (second lista1))
+         (if (< (string-length (third lista1)) (string-length (third lista2)))
+           (third lista2)
+           (third lista1))))
+
+;Ejercicio 6
+(define (obtener-palo char)
+ (cond ((char=? char #\♠) "Picas")
+       ((char=? char #\♥) "Corazones")
+       ((char=? char #\♦) "Diamantes")
+       (else "Tréboles")))
+
+(define (no-es-simbolo int)
+   (and (> int 1) (< int 10)))
+
+(define (char-a-valor char)
+  (- (char->integer char) (char->integer #\0)))
+
+(define (obten-valor char)
+  (cond ((no-es-simbolo (char-a-valor char)) (char-a-valor char))
+        ((char=? char #\J) 10)
+        ((char=? char #\Q) 11)
+        ((char=? char #\K) 12)
+        (else 1)))
+
+(define (carta carta-info)
+  (cons (obten-valor (string-ref (symbol->string carta-info) 0))
+        (obtener-palo  (string-ref (symbol->string carta-info) 1))))
+
+(define (mismo-valor carta1 carta2)
+  (equal? (obten-valor (string-ref (symbol->string carta1) 0))
+      (obten-valor (string-ref (symbol->string carta2) 0))))
+
+(define (string-num-carta carta)
+  (number->string(obten-valor (string-ref (symbol->string carta) 0))))
+
+(define (jugada-mano carta1 carta2 carta3)
+  (cond ((and (mismo-valor carta1 carta2) (mismo-valor carta2 carta3))
+        (string-append "Trio de " (string-num-carta carta1)))
+        ((or (mismo-valor carta1 carta2) (mismo-valor carta2 carta3))
+        (string-append "Pareja de " (string-num-carta carta2)))
+         ((or (mismo-valor carta1 carta3) (mismo-valor carta2 carta3))
+        (string-append "Pareja de " (string-num-carta carta3)))
+        (else "Nada")))
+
+
+  
+
+
+   
+        
+  
+
+
+
+
