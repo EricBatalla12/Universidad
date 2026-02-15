@@ -1,0 +1,9 @@
+# QuickShort CPU times in milliseconds:
+# Size 	 CPU time (ms.)
+# ----------------------------
+32768		4
+65536		7
+131072		14
+262144		31
+524288		62
+1048576		122
