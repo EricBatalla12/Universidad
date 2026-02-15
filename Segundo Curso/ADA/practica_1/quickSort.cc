@@ -1,3 +1,4 @@
+// Eric Batalla Ortúzar 24503990C
 /*
 ADA 2025-26
 Práctica 1: "Empirical analysis of Quicksort average-time complexity."
