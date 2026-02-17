@@ -28,9 +28,8 @@ double middle_QuickSort(int *v, long left, long right) {
         pivot = v[(i + j) / 2];
         // pivot based partitioning:
         do {
-            steps++;
-            while (v[i] < pivot) i++;
-            while (v[j] > pivot) j--;
+            while (v[i] < pivot) {steps++; i++;}
+            while (v[j] > pivot) {steps++; j--;}
             if (i <= j) {
                 swap(v[i], v[j]);
                 i++; j--;
@@ -123,38 +122,73 @@ cout << "# \t------------------- ------------------- ---------------------" << e
 cout << " Size   QuickSort  HeapSort QuickSort HeapSort  QuickSort  HeapSort" << endl;
 cout << "#============================================================================" << endl;
 
-    
+     
+
     for (int exp = 15; exp <= 20; exp++){
         size_t size = size_t( pow(2,exp) );
-        int* v = new int [size];
-        if (!v){
+        int* vquick = new int [size];
+        int* vheap = new int [size];
+
+        if (!vquick || !vheap){
             cerr << "Error, not enough memory!" << endl;
             exit (EXIT_FAILURE);  
         }
 
         cout << size << "\t" << std::flush;
 
-         for (size_t j = 0; j < size; j++) 
-            v[j] = rand(); 
+   //Declaración steps reiniciadas por cada exponente añadido
         double steps_rand_quick = 0;
         double steps_rand_heap = 0;
-        auto start = clock();
-        steps_rand_quick = middle_QuickSort(v,0,size - 1);
-        steps_rand_heap = heapSort(v,size - 1);
-        auto end = clock();
 
-        cout << steps_rand_quick/1000000 << "\t" << endl;
-        cout << "\t\t" << steps_rand_heap/1000000  << endl;
+        double steps_sorted_quick = 0;
+        double steps_sorted_heap = 0;
 
-        
+        double steps_reverse_quick = 0;
+        double steps_reverse_heap = 0;
 
-        for (size_t i = 1; i < size; i++)
-            if (v[i] < v[i-1]){ 
-                cerr << "Panic, array not sorted! " << i << endl; 
-                exit(EXIT_FAILURE);            
-            }
+        //Para hacer las 30 muestras y su media solo de los random, ya que los otros dos casos son los mismos vectores
+        for (int k = 0; k < 30; k++){
+         for (size_t j = 0; j < size; j++){
+            vquick[j] = rand(); 
+            vheap[j] = vquick[j];
+         }
+        //Cálculo de los steps
+        steps_rand_quick = middle_QuickSort(vquick,0,size - 1) + steps_rand_quick;
+        steps_rand_heap = heapSort(vheap,size) + steps_rand_heap;
 
-        delete[] v; 
+        }
+
+         for (size_t j = 0; j < size; j++){
+            vquick[j] = j; 
+            vheap[j] = j;
+         }
+
+        steps_sorted_quick = middle_QuickSort(vquick,0,size - 1) + steps_sorted_quick;
+        steps_sorted_heap = heapSort(vheap,size) + steps_sorted_heap;
+
+          for (size_t j = 0; j < size; j++){
+            vquick[j] = size - j; 
+            vheap[j] = size - j;
+         }
+
+        steps_reverse_quick = middle_QuickSort(vquick,0,size - 1) + steps_reverse_quick;
+        steps_reverse_heap = heapSort(vheap,size) + steps_reverse_heap;
+
+        steps_rand_quick = steps_rand_quick / 30; //Media de steps para ordenar un vector random con quicksort
+        steps_rand_heap = steps_rand_heap / 30; //Media de steps para ordenar un vector random con quicksort
+
+        //Imprimir por pantalla los millones de pasos
+        cout << steps_rand_quick/1000000 << "  ";
+        cout << steps_rand_heap/1000000  << "  ";
+
+        cout << steps_sorted_quick/1000000 << "   ";
+        cout << steps_sorted_heap/1000000  << "   ";
+
+        cout << steps_reverse_quick/1000000 << "   ";
+        cout << steps_reverse_heap/1000000  <<endl;
+
+        delete[] vquick;
+        delete[] vheap;
     }
 
     
