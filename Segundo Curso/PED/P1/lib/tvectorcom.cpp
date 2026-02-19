@@ -8,7 +8,7 @@ TVectorCom::TVectorCom()
 
 TVectorCom::TVectorCom(int tam)
 {
-    if(tam < 0)
+    if(tam <= 0)
     {
         tamano = 0;
         c = NULL;
@@ -36,8 +36,8 @@ TVectorCom::~TVectorCom()
     {
         delete[] c; //Los [] son porque el tipo del array lo he definido yo, no es primitivo
         c = NULL;
-        tamano = 0;
     }
+    tamano = 0;
 }
 
 TVectorCom& TVectorCom::operator=(const TVectorCom & other)
@@ -91,7 +91,7 @@ bool TVectorCom::operator!=(const TVectorCom & other)
     return false;
 }
 
-//Parte izquierda
+//Parte izquierda, devuelve la zona de memoria y le asigna el TComplejo de la derecha
 TComplejo& TVectorCom::operator[](int dim)
 {
     if (dim > 0 && dim <= tamano) return c[dim - 1];
@@ -105,7 +105,87 @@ TComplejo& TVectorCom::operator[](int dim)
 TComplejo TVectorCom::operator[](int dim) const
 {
      if (dim > 0 && dim <= tamano) return c[dim - 1];
-    return TComplejo(); //Aquí se crea una variable temporal ya que se va a devolver
+    return error; //Aquí se crea una variable temporal ya que se va a devolver
     //por valor, es decir, llama al constructor de copia para crear un nuevo objeto, 
     //se destruye el temporal pero se mantiene la copia.
 }
+
+int TVectorCom::Tamano()
+{
+    return tamano;
+}
+
+int TVectorCom::Ocupadas()
+{
+    int ocupadas = 0;
+    //Se crea un TComplejo (0,0) para compararlo en el bucle.
+    //Ya que se considera que (0,0) es vacío.
+    TComplejo aux = TComplejo();
+    for (int i = 0; i < tamano; i++)
+    {
+        if (c[i] != aux) ocupadas++;
+    }
+    return ocupadas;
+}
+
+void TVectorCom::MostrarComplejos(double real)
+{
+    int ultimo = 0;
+    for (int i = 0; i < tamano; i++)
+    {
+        if (c[i].Re() >= real) ultimo = i;
+    }
+
+    cout << "[";
+    for (int i = 0; i <= ultimo; i++)
+    {
+        if (c[i].Re() >= real)
+        {
+            if (i == ultimo)
+            {
+                cout << c[i];
+            } else {
+                cout << c[i] << ", ";
+            }
+        } 
+    }
+    cout << "]";
+}
+
+bool TVectorCom::Redimensionar(int dim)
+{
+    if (dim <= 0) return false;
+    if (dim == tamano) return false;
+    if (dim > tamano)
+    {
+        TComplejo *aux = c;
+        c = new TComplejo[dim];
+        for (int i = 0; i < tamano; i++) c[i] = aux[i];
+    } else {
+        for (int i = dim; i < tamano; i++)
+        {
+            c[i].Re(0);
+            c[i].Im(0);
+        }
+    }
+    return true;
+}
+
+ostream & operator<<(ostream & os, TVectorCom & vector)
+{
+    os << "[";
+    for (int i = 0; i < vector.tamano; i++)
+    {
+        if (i == vector.tamano - 1)
+        {
+            os << "(" << i << ")" << vector[i];
+        } else {
+            os << "(" << i << ")" << vector[i] << ", ";
+        }
+    }
+    os << "]";
+    return os;
+}
+
+
+
