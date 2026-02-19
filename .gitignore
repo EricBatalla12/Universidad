@@ -73,3 +73,5 @@ dkms.conf
 # Para DrRacket
 compiled/
 *.bak
+.vs
+*.pdf

@@ -85,7 +85,6 @@
         [else (veces-aparece (rest lista))]))
 
 
-;(define (solo-dos-iguales? lista)
 
 
 ;Ejercicio 3
@@ -112,12 +111,34 @@
         [else (contar-datos-iguales (rest lista-parejas))]))
 
 ;Ejercicio 5
-
+;a)
 (define (palo-carta symbol)
  (cond ((char=? (string-ref(symbol->string symbol) 1) #\♠) "Picas")
        ((char=? (string-ref(symbol->string symbol) 1) #\♥) "Corazones")
        ((char=? (string-ref(symbol->string symbol) 1) #\♦) "Diamantes")
        (else "Tréboles")))
+;b)
+(define (veces-palo lista palo)
+  (cond [(null? lista) 0]
+        [(equal? (symbol->string palo) (palo-carta (first lista)))
+         (+ 1(veces-palo (rest lista) palo))]
+        [else (veces-palo (rest lista) palo)]))
+
+(define (color? lista)
+  (= (veces-palo lista (string->symbol(palo-carta(first lista)))) 5))
+;c)
+(define (escalera? lista)
+  (cond [(null? lista) #t]
+        [(= (length lista) 1) #t]
+        [(= (+ 1(car(carta(first lista)))) (car(carta(second lista))))
+         (escalera? (rest lista))]
+        [else #f]))
+
+(define (escalera-color? mano)
+  (and (escalera? mano) (color? mano)))
+
+
+
 
 
 
