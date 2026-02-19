@@ -171,21 +171,14 @@ bool TVectorCom::Redimensionar(int dim)
     return true;
 }
 
-ostream & operator<<(ostream & os, TVectorCom & vector)
-{
+ostream & operator<<(ostream & os, TVectorCom & vector) {
     os << "[";
-    for (int i = 0; i < vector.tamano; i++)
-    {
-        if (i == vector.tamano - 1)
-        {
-            os << "(" << i << ")" << vector[i];
-        } else {
-            os << "(" << i << ")" << vector[i] << ", ";
-        }
+    for (int i = 0; i < vector.tamano; i++){
+        os << "(" << i+1 << ") " << vector.c[i];
+        if(i < vector.tamano-1) os << ", ";
     }
     os << "]";
     return os;
 }
-
 
 
