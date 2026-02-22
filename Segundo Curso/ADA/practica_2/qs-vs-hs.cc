@@ -1,9 +1,8 @@
+//24503990C Eric Batalla Ortúzar
 /*
-
 ADA. 2025-26
 Practice 2: "Empirical analysis by means of program-steps account of two sorting algorithms: Middle-Quicksort and Heapsort."
 */
-#include <unistd.h>
 #include <iostream>
 #include <math.h>
 
@@ -28,6 +27,7 @@ double middle_QuickSort(int *v, long left, long right) {
         pivot = v[(i + j) / 2];
         // pivot based partitioning:
         do {
+            steps++;
             while (v[i] < pivot) {steps++; i++;}
             while (v[j] > pivot) {steps++; j--;}
             if (i <= j) {
@@ -93,7 +93,6 @@ double heapSort(int *v, size_t n)
     // Build a max-heap with the input array ("heapify"):
     // Starting from the last non-leaf node (right to left), sink each element to construct the heap.
     for (size_t i = n / 2 - 1; true; i--) {
-        steps++;
         steps = sink(v, n, i) + steps;
         if (i == 0) break; // As size_t is an unsigned type
     }
@@ -101,7 +100,6 @@ double heapSort(int *v, size_t n)
     // At this point, we have a max-heap. Now, sort the array:
     // Repeatedly swap the root (largest element) with the last element and rebuild the heap.
     for (size_t i = n - 1; i > 0; i--) {
-        steps++;
         // Move the root (largest element) to the end by swapping it with the last element.
         swap(v[0], v[i]);
         // Rebuild the heap by sinking the new root element.

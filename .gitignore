@@ -69,9 +69,13 @@ dkms.conf
 *.png
 *.CPUtimes
 *.log
+*.Msteps
 
 # Para DrRacket
 compiled/
 *.bak
 .vs
 *.pdf
+
+#Comprimibles
+*tar.*
