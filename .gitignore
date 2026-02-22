@@ -70,6 +70,7 @@ dkms.conf
 *.CPUtimes
 *.log
 *.Msteps
+*.sh
 
 # Para DrRacket
 compiled/

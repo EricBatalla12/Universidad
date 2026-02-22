@@ -2,8 +2,9 @@
 
 all: qs-vs-hs qs-vs-hs.Msteps graphs
 
+#Pongo el -O3 porque es la única solución que he encontrado para que dure menos de 20seg
 qs-vs-hs: qs-vs-hs.cc
-	g++ qs-vs-hs.cc -o qs-vs-hs
+	g++ -O3 qs-vs-hs.cc -o qs-vs-hs
 
 qs-vs-hs.Msteps: qs-vs-hs
 	./qs-vs-hs > qs-vs-hs.Msteps
