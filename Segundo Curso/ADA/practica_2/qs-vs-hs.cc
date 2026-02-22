@@ -30,6 +30,7 @@ double middle_QuickSort(int *v, long left, long right) {
             steps++;
             while (v[i] < pivot) {steps++; i++;}
             while (v[j] > pivot) {steps++; j--;}
+            steps++;
             if (i <= j) {
                 swap(v[i], v[j]);
                 i++; j--;
@@ -61,7 +62,6 @@ double sink(int *v, size_t n, size_t i)
     size_t l, r; // indices of left and right childs
 
     do {
-
         steps++;
         largest = i;  // Initialize largest as root
         l = 2 * i + 1;  // left = 2*i + 1
