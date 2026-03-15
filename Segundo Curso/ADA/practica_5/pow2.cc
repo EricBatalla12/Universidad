@@ -20,7 +20,7 @@ unsigned long pow2_1(unsigned num)
 	}
 	return result;
 }
-// coste : \Theta (log n). El tamaño del problema se va dividiendo entre 2S
+// coste : \Theta (log n). El tamaï¿½o del problema se va dividiendo entre 2S
 unsigned long pow2_2(unsigned num)
 {
 	//Caso base
@@ -38,13 +38,13 @@ unsigned long pow2_2(unsigned num)
 		return 2 * divide * divide;
 	}
 }
-//coste: \Theta(n^2). Se hacen el cuadrado de pasos respecto al tamaño del problema
+//coste: \Theta(n^2). Se hacen el cuadrado de pasos respecto al tamaï¿½o del problema
 unsigned long pow2_3(unsigned num)
 {
 	unsigned long result = 1;
 	for (int i = 0; i < num; i++)
 	{
-		unsigned long iterador = result; //Esto permite 2^n, antes he probado sin esto y sería n^2, con ambos bucles llegando hasta < num.
+		unsigned long iterador = result; //Esto permite 2^n, antes he probado sin esto y serï¿½a n^2, con ambos bucles llegando hasta < num.
 		for (int j = 0; j < iterador; j++)
 		{
 			pasos++;
