@@ -9,6 +9,12 @@
     {
         anterior=siguiente=NULL;
     }
+
+    TListaNodo::TListaNodo(const TComplejo& complejo):e(complejo)
+    {
+        anterior=siguiente=NULL;
+    }
+
     //Copia
     TListaNodo::TListaNodo(const TListaNodo& other):e(other.e)
     {
@@ -75,8 +81,105 @@
 
     TListaPos TListaPos::Anterior()
     {
-        //Si el anterior es nulo es el pimer nodo
-        if(pos->anterior == NULL) return TListaPos();
-        this->pos = pos->anterior;
+       //Crear una posición temporal que como se devuelve por valor
+       //se devolverá una copia. COmo es por defecto, pos = NULL.
+       TListaPos aux;
+       //Comprobar que existe un anterior
+       if (pos->anterior != NULL) aux.pos = pos->anterior;
+       return aux;
     }
+
+    TListaPos TListaPos::Siguiente()
+    {
+       TListaPos aux;
+       //Comprobar que existe un siguiente
+       if (pos->siguiente != NULL) aux.pos = pos->siguiente;
+       return aux;
+    }
+
+    bool TListaPos::EsVacia()
+    {
+        return pos == NULL;
+    }
+
+ //################
+ //CLASE TLISTACOM
+ //################
+
+TListaCom::TListaCom():primero(), ultimo()
+{
+    //Los punteros primero y ultimo apuntan a NULL
+}
+
+TListaCom::TListaCom(const TListaCom& other):primero(other.primero), ultimo(other.ultimo)
+{
+    //Copia profunda de la lista
+    //TO-DO
+}
+
+TListaCom::~TListaCom()
+{
+    //Usar delete para vaciar memoria
+}
+
+TListaCom & TListaCom::operator=(const TListaCom& other)
+{
+    if (this != &other)
+    {
+        if (other.EsVacia())
+        {
+            for
+        }
+    }
+    return *this;
+}
+
+bool TListaCom::operator==(const TListaCom& other)
+{
+    re
+}
+
+int TListaCom::Longitud()
+{
+    int longitud = 0;
+    TListaNodo *aux = this->primero;
+
+    while (aux != NULL)
+    {
+        longitud++;
+        aux = aux->siguiente;
+    }
+    return longitud;
+}
+
+bool TListaCom::InsCabeza(const TComplejo& complejo)
+{
+    //Con esto tengo un puntero con siguiente y anterior a null y valor del complejo
+    //Si no ha podido reservar memoria devuelve NULL.
+    TListaNodo *cabeza = new TListaNodo(complejo);
+
+    if (cabeza != NULL)
+    {
+        //Comprobar lista vacía
+        if (primero == NULL && ultimo == NULL)
+        {
+            primero=ultimo=cabeza;
+        }
+        else
+        {        
+            //Enganchar el nuevo nodo a la cabeza
+            cabeza->anterior = this->primero;
+            this->primero->siguiente = cabeza;
+            //Mover el dedo "último"
+            this->primero = cabeza;
+        }
+    }
+    else
+    {
+        return false;
+    }
+
+    return true;
+}
+
 
