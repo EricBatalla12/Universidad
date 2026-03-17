@@ -32,6 +32,7 @@ class TListaNodo
 
 class TListaPos
 {
+    friend class TListaCom;
     TListaNodo *pos;
     //Cosntrucor por defecto
     TListaPos();
@@ -50,7 +51,7 @@ class TListaPos
     TListaPos Anterior();
     TListaPos Siguiente();
     // Devuelve TRUE si la posición no apunta a una lista, FALSE en caso contrario
-    bool EsVacia();
+    bool EsVacia() const;
 };
 
 class TListaCom
@@ -98,6 +99,8 @@ class TListaCom
     TComplejo Obtener(const TListaPos &);
     // Devuelve true si el elemento está en la lista, false en caso contrario
     bool Buscar(const TComplejo &);
+    // Devuelve la posición dónde está el complejo
+    TListaPos BuscarPos(const TComplejo &);
     // Devuelve la longitud de la lista
     int Longitud();
     // Devuelve la primera posición en la lista
