@@ -1,0 +1,14 @@
+# Configuración del archivo de salida
+set terminal pngcairo size 800,600
+set output 'pow2.png'
+
+# Títulos y etiquetas
+set title 'Análisis Empírico de Complejidad (pow2)'
+set xlabel 'Tamaño del problema (n)'
+set ylabel 'Número de pasos'
+set key left top
+
+#Dibuar columnas
+plot 'resultados.dat' using 1:2 with linespoints title 'pow2\_1 (Iterativa)', \
+     'resultados.dat' using 1:3 with linespoints title 'pow2\_2 (Recursiva)', \
+     'resultados.dat' using 1:4 with linespoints title 'pow2\_3'

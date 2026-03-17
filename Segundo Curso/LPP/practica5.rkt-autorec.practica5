@@ -1,0 +1,126 @@
+#lang racket
+(require "lpp.rkt")
+
+;Ejercicio 1
+;################
+;       a)
+;################
+
+(define (aplica-veces f1 f2 n x)
+  (if (= 0 n)
+      x
+      (f2 (f1 (aplica-veces f1 f2 (- n 1) x)))))
+
+;################
+;       b)
+;################
+
+(define (elimina-primero elem lista)
+  (cond [(null? lista)
+         '()]
+        [(equal? elem (first lista)) (rest lista)]
+        [else (cons (first lista)(elimina-primero elem (rest lista)))]))
+
+(define (mueve-al-principio-condicion pred lista)
+  (cond [(null? lista)
+         '()]
+         [(pred (first lista))
+          (elimina-primero (first lista) lista)]
+         [else
+          (cons (first lista)(mueve-al-principio-condicion pred (rest lista)))]))
+
+
+;################
+;       c)
+;################
+
+(define (comprueba funcion lista1 lista2)
+  (cond [(or (null? lista1) (null? lista2))
+         '()]
+        [(funcion (first lista1) (first lista2))
+         (cons (cons (first lista1) (first lista2)) (comprueba funcion (rest lista1) (rest lista2)))]
+        [else
+         (comprueba funcion (rest lista1) (rest lista2))]))
+        
+              
+
+;Ejercicio 2
+
+;################
+;       a)
+;################
+
+(define (inserta-ordenada-generica elem lista pred)
+  (cond [(null? lista)
+         (list elem)]
+        [(pred elem (first lista))
+         (cons elem lista)]
+        [else
+         (cons (first lista) (inserta-ordenada-generica elem (rest lista) pred))]))
+
+(define (ordena-generica lista pred)
+  (cond [(null? lista)
+         '()]
+        [else
+         (inserta-ordenada-generica (first lista) (ordena-generica (rest lista) pred) pred)]))
+         
+;################
+;       b)
+;################
+
+;Ejercicio 3
+
+(map (lambda (x)
+         (cond 
+            ((symbol? x) (symbol->string x))
+            ((number? x) (number->string x))
+            ((boolean? x) (if x "#t" "#f"))
+            (else "desconocido"))) '(1 #t hola #f (1 . 2))); --> '("1" "#t" "hola" "#f" "desconocido")
+
+(filter (lambda (x) 
+            (equal? (string-ref (symbol->string x) 1) #\a)) 
+    '(alicante barcelona madrid almería)) ; ⇒ '(barcelona madrid)
+(foldr (lambda (dato resultado)
+          (string-append dato "*" resultado)) "" 
+          '("Hola" "que" "tal")) ; ⇒ "Hola*que*tal*
+
+(foldr append '() '((1 2) (3 4 5) (6 7) (8))) ; --> '(1 2 3 4 5 6 7 8)
+
+(foldl (lambda (dato resultado)
+         (string-append
+          (symbol->string (car dato))
+          (symbol->string (cdr dato))
+          resultado)) "" '((a . b) (hola . adios) (una . pareja))) ; ⇒ '("pareja" "una" "adios" "hola" "b" "a")
+
+
+(foldr (lambda (dato resultado)
+           (cons (+ (car resultado) dato)
+                 (+ (cdr resultado) 1))) '(0 . 0) '(1 1 2 2 3 3)) ; ⇒
+
+(apply + (map cdr '((1 . 3) (2 . 8) (2 . 4)))) ; --> 15
+
+(apply min (map car (filter (lambda (p)
+                                  (> (car p) (cdr p))) 
+                                  '((3 . 1) (1 . 20) (5 . 2))))) ; ⇒ 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
