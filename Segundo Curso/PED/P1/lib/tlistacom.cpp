@@ -108,30 +108,59 @@
 
 TListaCom::TListaCom():primero(), ultimo()
 {
-    //Los punteros primero y ultimo apuntan a NULL
+    //Los punteros primero y ultimo apuntan a NULL directamente
+    //si no usara el inicializador : el compilador crearía los punteros
+    //pero apuntarían a basura
 }
 
-TListaCom::TListaCom(const TListaCom& other):primero(other.primero), ultimo(other.ultimo)
+TListaCom::TListaCom(const TListaCom& other):primero(), ultimo()
 {
-    //Copia profunda de la lista
-    //TO-DO
+    TListaPos aux_other;
+    TListaPos aux_newList;
+    aux_other.pos = other.primero;
+    aux_newList.pos = this->primero;
+
+    while (aux_other.pos != NULL)
+    {
+        this->InsertarD(aux_other.pos->e, aux_newList);
+        aux_other.pos = aux_other.pos->siguiente;
+        //Como en InsertarD último es el nuevo nodo en caso
+        //de que sea el útimo por la derecha se puede ir 
+        //avanzando este puntero viendo dónde está la última posición.
+        aux_newList.pos = this->ultimo;
+    }
 }
 
 TListaCom::~TListaCom()
 {
-    //Usar delete para vaciar memoria
+    TListaPos aux;
+    TListaPos aux2;
+    aux.pos = this->primero;
+
+    while(aux.pos != NULL)
+    {
+        aux2.pos = aux.pos->siguiente;
+        delete aux.pos;
+        aux = aux2;
+    }
 }
 
 TListaCom & TListaCom::operator=(const TListaCom& other)
 {
-    if (this != &other)
+    //Si se apunta a la misma dirección se devuelve tal cual
+    if (this == &other) return *this;
+
+    if (other.EsVacia())
     {
-        if (other.EsVacia())
-        {
-            for
-        }
+        this->~TListaCom();
+        return *this;
     }
+
+    this->primero = other.primero;
+    this->ultimo = other.ultimo;
+
     return *this;
+
 }
 
 bool TListaCom::operator==(const TListaCom& other)
@@ -152,7 +181,7 @@ int TListaCom::Longitud()
     return longitud;
 }
 
-bool TListaCom::EsVacia()
+bool TListaCom::EsVacia() const
 {
     return (primero == NULL & ultimo == NULL);
 }
@@ -235,16 +264,74 @@ bool TListaCom::Borrar(const TComplejo& complejo)
     TListaPos aux = this->BuscarPos(complejo);
     if (aux.EsVacia()) return false;
 
-    //Solo hay un elemento
-    if (this->primero == aux.pos && this->ultimo == aux.pos)
-    {
-        delete aux.pos;
-        primero=ultimo=NULL;
-        return true
-    } else if ()
-    {
+    return this->Borrar(aux);
+}
 
+//No es constante ya que se va a modificar, se elimina
+bool TListaCom::Borrar(TListaPos& posicion)
+{
+    //Solo hay un elemento
+    if (this->primero == posicion.pos && this->ultimo == posicion.pos)
+    {
+        primero=ultimo=NULL;
+        delete posicion.pos;
+        posicion.pos = NULL; //Eliminar la dirección que apunta a basura.
+        return true;
     }
+    //Se elimina el primer elemento
+    if (this->primero == posicion.pos)
+    {
+        //Ahora primero apunta al nodo siguiente
+        this->primero = primero->siguiente;
+        //Siguiente de primero apunta a NULL para no apuntar a basura
+        this->primero->anterior = NULL;
+        delete posicion.pos;
+        posicion.pos = NULL;
+        return true;
+    }
+    //Se elimina el último elemento
+    if (this->ultimo == posicion.pos)
+    {
+        this->ultimo = ultimo->anterior;
+        this->ultimo->siguiente = NULL;
+        delete posicion.pos;
+        posicion.pos = NULL;
+        return true;
+    }
+    //Se elimina un elemnto de por medio de la lista
+    //El nodo de atrás apunta al siguiente de posicion.pos
+    posicion.pos->anterior->siguiente = posicion.pos->siguiente;
+    //El nodo de delante apunta al anterior de posicion.pos
+    posicion.pos->siguiente->anterior = posicion.pos->anterior;
+    delete posicion.pos;
+    posicion.pos = NULL;
+    return true;
+}
+
+bool TListaCom::BorrarTodos(const TComplejo& complejo)
+{
+    //Voy a intentar no usar Borrar(TComplejo) ni BuscarPos para evitar que la 
+    //complejidad sea n2 (cuadrática)
+    //Para ello he creado un método 
+    TListaPos aux;
+    TListaPos aux2;
+    aux.pos = this->primero;
+    bool borrado = false;
+
+    while(aux.pos != NULL)
+    {
+        if(this->Obtener(aux) == complejo)
+        {
+            //Aquí aux2 apunta al siguiente de aux, ya que luego si 
+            //intenta copiarse a aux tal cual apuntaría a basura, y el 
+            //siguiente de basura es error de segmentación
+            aux2.pos = aux.pos->siguiente;
+            this->Borrar(aux);
+            aux = aux2;
+            borrado = true;
+        } else {aux.pos = aux.pos->siguiente;}
+    }
+    return borrado;
 }
 
 bool TListaCom::Buscar(const TComplejo& complejo)
