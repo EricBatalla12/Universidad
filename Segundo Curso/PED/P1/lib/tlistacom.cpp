@@ -115,6 +115,31 @@ TListaCom::TListaCom():primero(), ultimo()
 
 TListaCom::TListaCom(const TListaCom& other):primero(), ultimo()
 {
+    this->Clonador(other);
+}
+
+//Método usado para limpiar toda la memoria que ocupa una lista
+void TListaCom::Destructor()
+{
+    TListaPos aux;
+    TListaPos aux2;
+    aux.pos = this->primero;
+
+    while(aux.pos != NULL)
+    {
+        aux2.pos = aux.pos->siguiente;
+        delete aux.pos;
+        aux = aux2;
+    }
+
+    //Cuando operator= llama a esta función es posible que vaya a reutilizar 
+    //la lista, por eso deben apuntar a NULL y no a basura, fallo de segmento.
+    this->primero = NULL;
+    this->ultimo = NULL;
+}
+
+void TListaCom::Clonador(const TListaCom& other)
+{
     TListaPos aux_other;
     TListaPos aux_newList;
     aux_other.pos = other.primero;
@@ -133,42 +158,105 @@ TListaCom::TListaCom(const TListaCom& other):primero(), ultimo()
 
 TListaCom::~TListaCom()
 {
-    TListaPos aux;
-    TListaPos aux2;
-    aux.pos = this->primero;
-
-    while(aux.pos != NULL)
-    {
-        aux2.pos = aux.pos->siguiente;
-        delete aux.pos;
-        aux = aux2;
-    }
+    this->Destructor();
 }
 
 TListaCom & TListaCom::operator=(const TListaCom& other)
 {
     //Si se apunta a la misma dirección se devuelve tal cual
     if (this == &other) return *this;
-
-    if (other.EsVacia())
-    {
-        this->~TListaCom();
-        return *this;
-    }
-
-    this->primero = other.primero;
-    this->ultimo = other.ultimo;
+    //Destruyo siempre la lista, si me entra una de 3 y la mía 
+    //es de 5 limpio la mía y copio la de 3.
+    //Si other está vacía devuelvo vacío igualmente.
+    this->Destructor();
+    this->Clonador(other);
 
     return *this;
-
 }
 
 bool TListaCom::operator==(const TListaCom& other)
 {
-    re
+    if (this == &other) return true;
+    if (this->Longitud() != other.Longitud()) return false;
+    
+    TListaPos aux;
+    TListaPos aux_other;
+    aux.pos = this->primero;
+    aux_other.pos = other.primero;
+
+    while(aux.pos != NULL)
+    {
+        //Sé que puedo acceder al complejo directamente, 
+        //Pero así se ve más claro creo yo.
+        if(this->Obtener(aux) != other.Obtener(aux_other))
+        {
+            return false;
+        } else 
+        {
+            aux.pos = aux.pos->siguiente;
+            aux_other.pos = aux_other.pos->siguiente;
+        }
+    }
+    return true;
 }
 
-int TListaCom::Longitud()
+bool TListaCom::operator!=(const TListaCom& other)
+{
+    //Como recordatorio, * es para tener el objeto real,
+    //el operador me pide un TListaCom (objeto real), no un
+    //TListaCom* (apuntador al objeto real).
+   return !(*this == other);
+}
+
+TListaCom TListaCom::operator+(const TListaCom& other)
+{
+    //Crear nueva lista con constructor de copia
+    TListaCom resultado_suma(*this);
+
+    TListaPos aux_other;
+    TListaPos cola_resultado;
+    aux_other.pos = other.primero;
+    //Se parte de la última posición de la nueva lista
+    cola_resultado.pos = resultado_suma.ultimo;
+
+    while (aux_other.pos != NULL)
+    {
+        resultado_suma.InsertarD(other.Obtener(aux_other), cola_resultado);
+        aux_other.pos = aux_other.pos->siguiente;
+        //InsertarD mueve el puntero último al último nodo
+        cola_resultado.pos = resultado_suma.ultimo;
+    }
+    //Es un objeto directamente, no hace falta *
+    return resultado_suma;
+}
+
+TListaCom TListaCom::operator-(const TListaCom& other) 
+{
+    //Lista por defecto
+    TListaCom resultado_resta;
+
+    TListaPos aux_this;
+    TListaPos cola_resultado;
+    
+    aux_this.pos = this->primero;
+    cola_resultado.pos = resultado_resta.ultimo;
+
+    while (aux_this.pos != NULL)
+    {
+        //Buscar en la otra lista mi complejo
+        if (!other.Buscar(aux_this.pos->e))
+        {
+            resultado_resta.InsertarD(aux_this.pos->e, cola_resultado);
+            //Mover la cola
+            cola_resultado.pos = resultado_resta.ultimo;
+        }
+        aux_this.pos = aux_this.pos->siguiente;
+    }
+    
+    return resultado_resta;
+}
+
+int TListaCom::Longitud() const
 {
     int longitud = 0;
     TListaNodo *aux = this->primero;
@@ -334,7 +422,7 @@ bool TListaCom::BorrarTodos(const TComplejo& complejo)
     return borrado;
 }
 
-bool TListaCom::Buscar(const TComplejo& complejo)
+bool TListaCom::Buscar(const TComplejo& complejo) const
 {
     TListaPos aux;
     aux.pos = this->primero;
@@ -362,7 +450,7 @@ TListaPos TListaCom::BuscarPos(const TComplejo& complejo)
     return TListaPos();
 }
 
-TComplejo TListaCom::Obtener(const TListaPos& posicion)
+TComplejo TListaCom::Obtener(const TListaPos& posicion) const
 {
     if (posicion.EsVacia()) return TComplejo();
     return posicion.pos->e;
@@ -384,4 +472,20 @@ TListaPos TListaCom::Ultima()
     return aux;
 }
 
+ostream& operator<<(ostream& os, const TListaCom& lista)
+{
+    os << "{";
+    TListaNodo* aux = lista.primero; 
 
+    while (aux != NULL)
+    {
+        os << aux->e;
+        if (aux->siguiente != NULL)
+        {
+            os << " ";
+        }
+        aux = aux->siguiente;
+    }
+    os << "}";
+    return os;
+}

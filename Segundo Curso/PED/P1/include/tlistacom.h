@@ -6,6 +6,8 @@ class TListaNodo
     //Permite a la clase TListaPos acceder a los atributos privados de esta clase
     friend class TListaPos;
     friend class TListaCom;
+    //Para poder leer siguiente y complejos en TListaCom
+    friend ostream& operator<<(ostream& os, const TListaCom& lista);
     private:
     //Elemento del nodo
     TComplejo e;
@@ -70,6 +72,10 @@ class TListaCom
     TListaCom (const TListaCom &);
     // Destructor
     ~TListaCom ();
+    //Limpiar toda la memoria
+    void Destructor();
+    //Clonar una lista
+    void Clonador(const TListaCom&);
     // Sobrecarga del operador asignación
     TListaCom & operator=(const TListaCom &);
     // Sobrecarga del operador igualdad
@@ -81,7 +87,7 @@ class TListaCom
     // Sobrecarga del operador resta
     TListaCom operator-(const TListaCom &);
     // Devuelve true si la lista está vacía, false en caso contrario
-    bool EsVacia();
+    bool EsVacia() const;
     // Inserta el elemento en la cabeza de la lista
     bool InsCabeza(const TComplejo &);
     // Inserta el elemento a la izquierda de la posición indicada
@@ -96,13 +102,13 @@ class TListaCom
     //No se pone const ya que se va a modificar la TListaPos.
     bool Borrar(TListaPos &);
     // Obtiene el elemento que ocupa la posición indicada
-    TComplejo Obtener(const TListaPos &);
+    TComplejo Obtener(const TListaPos &) const;
     // Devuelve true si el elemento está en la lista, false en caso contrario
-    bool Buscar(const TComplejo &);
+    bool Buscar(const TComplejo &) const;
     // Devuelve la posición dónde está el complejo
     TListaPos BuscarPos(const TComplejo &);
     // Devuelve la longitud de la lista
-    int Longitud();
+    int Longitud() const;
     // Devuelve la primera posición en la lista
     TListaPos Primera();
     // Devuelve la última posición en la lista
