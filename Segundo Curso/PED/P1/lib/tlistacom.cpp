@@ -141,18 +141,27 @@ void TListaCom::Destructor()
 void TListaCom::Clonador(const TListaCom& other)
 {
     TListaPos aux_other;
-    TListaPos aux_newList;
     aux_other.pos = other.primero;
-    aux_newList.pos = this->primero;
 
     while (aux_other.pos != NULL)
     {
-        this->InsertarD(aux_other.pos->e, aux_newList);
+        //Si la lista está vacía entra siendo cabeza
+        if (this->EsVacia())
+        {
+            this->InsCabeza(aux_other.pos->e);
+        }
+        else //Si hay almenos un elemento, inserta por la derecha
+        {
+            //Es importante actualizar cada vez cuál es el último 
+            TListaPos aux_newList;
+            aux_newList.pos = this->ultimo;
+            this->InsertarD(aux_other.pos->e, aux_newList);
+            //Como en InsertarD último es el nuevo nodo en caso
+            //de que sea el útimo por la derecha se puede ir 
+            //avanzando este puntero viendo dónde está la última posición.
+            
+        }
         aux_other.pos = aux_other.pos->siguiente;
-        //Como en InsertarD último es el nuevo nodo en caso
-        //de que sea el útimo por la derecha se puede ir 
-        //avanzando este puntero viendo dónde está la última posición.
-        aux_newList.pos = this->ultimo;
     }
 }
 
@@ -214,17 +223,24 @@ TListaCom TListaCom::operator+(const TListaCom& other)
     TListaCom resultado_suma(*this);
 
     TListaPos aux_other;
-    TListaPos cola_resultado;
+    
     aux_other.pos = other.primero;
     //Se parte de la última posición de la nueva lista
-    cola_resultado.pos = resultado_suma.ultimo;
 
     while (aux_other.pos != NULL)
     {
-        resultado_suma.InsertarD(other.Obtener(aux_other), cola_resultado);
+        if (resultado_suma.EsVacia())
+        {
+            resultado_suma.InsCabeza(aux_other.pos->e);
+        }
+        else
+        {
+            TListaPos cola_resultado;
+            cola_resultado.pos = resultado_suma.ultimo;
+            resultado_suma.InsertarD(other.Obtener(aux_other), cola_resultado);
+        }
         aux_other.pos = aux_other.pos->siguiente;
         //InsertarD mueve el puntero último al último nodo
-        cola_resultado.pos = resultado_suma.ultimo;
     }
     //Es un objeto directamente, no hace falta *
     return resultado_suma;
@@ -236,19 +252,23 @@ TListaCom TListaCom::operator-(const TListaCom& other)
     TListaCom resultado_resta;
 
     TListaPos aux_this;
-    TListaPos cola_resultado;
-    
     aux_this.pos = this->primero;
-    cola_resultado.pos = resultado_resta.ultimo;
 
     while (aux_this.pos != NULL)
     {
         //Buscar en la otra lista mi complejo
         if (!other.Buscar(aux_this.pos->e))
         {
-            resultado_resta.InsertarD(aux_this.pos->e, cola_resultado);
-            //Mover la cola
-            cola_resultado.pos = resultado_resta.ultimo;
+            if (resultado_resta.EsVacia())
+            {
+                resultado_resta.InsCabeza(aux_this.pos->e);
+            }
+            else
+            {
+                TListaPos cola_resultado;
+                cola_resultado.pos = resultado_resta.ultimo;
+                resultado_resta.InsertarD(aux_this.pos->e, cola_resultado);
+            }
         }
         aux_this.pos = aux_this.pos->siguiente;
     }
@@ -472,19 +492,16 @@ TListaPos TListaCom::Ultima()
     return aux;
 }
 
-ostream& operator<<(ostream& os, const TListaCom& lista)
-{
+ostream& operator<<(ostream& os, const TListaCom& list) {
     os << "{";
-    TListaNodo* aux = lista.primero; 
-
-    while (aux != NULL)
-    {
-        os << aux->e;
-        if (aux->siguiente != NULL)
-        {
+    TListaPos aux;
+    aux.pos = list.primero;
+    while (!aux.EsVacia()) {
+        os << list.Obtener(aux);
+        aux = aux.Siguiente();
+        if (!aux.EsVacia()) {
             os << " ";
         }
-        aux = aux->siguiente;
     }
     os << "}";
     return os;

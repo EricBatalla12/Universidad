@@ -44,7 +44,7 @@ TComplejo& TComplejo::operator=(const TComplejo& other)
     return *this;
 }
 
-TComplejo TComplejo::operator+ (const TComplejo& complejo) 
+TComplejo TComplejo::operator+(const TComplejo& complejo) 
 {
     //Se declara el objeto directamente, no es un puntero
     TComplejo temp; 
@@ -54,7 +54,7 @@ TComplejo TComplejo::operator+ (const TComplejo& complejo)
     return temp;
 }
 
-TComplejo TComplejo::operator- (const TComplejo& complejo)
+TComplejo TComplejo::operator-(const TComplejo& complejo)
 {
     TComplejo temp; 
     temp.re = this->re - complejo.re;
@@ -62,7 +62,7 @@ TComplejo TComplejo::operator- (const TComplejo& complejo)
     return temp;
 }
 
-TComplejo TComplejo::operator* (const TComplejo& complejo)
+TComplejo TComplejo::operator*(const TComplejo& complejo)
 {
     TComplejo temp; 
     temp.re = this->re * complejo.re;
@@ -70,24 +70,21 @@ TComplejo TComplejo::operator* (const TComplejo& complejo)
     return temp;
 }
 
-TComplejo TComplejo::operator+ (double real)
+TComplejo TComplejo::operator+(double real)
 {
-    TComplejo temp; 
-    temp.re = this->re + real;
+    TComplejo temp = operator+(TComplejo(real)); 
     return temp;
 }
 
-TComplejo TComplejo::operator- (double real)
+TComplejo TComplejo::operator-(double real)
 {
-    TComplejo temp; 
-    temp.re = this->re - real;
+    TComplejo temp = operator-(TComplejo(real));
     return temp;
 }
 
-TComplejo TComplejo::operator* (double real)
+TComplejo TComplejo::operator*(double real)
 {
-    TComplejo temp; 
-    temp.re = this->re * real;
+    TComplejo temp = operator*(TComplejo(real));
     return temp;
 }
 

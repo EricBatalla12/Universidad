@@ -16,4 +16,4 @@ $(LIBDIR)/%.o : $(LIBDIR)/%.cpp $(INCLUDEDIR)/%.h
 
 
 clean: #rm -f $(OBJ) 
-	del /f /q lib*.o tad.exe
+	del /f /q lib\*.o tad.exe

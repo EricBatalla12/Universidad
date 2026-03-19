@@ -1,13 +1,14 @@
 #ifndef TLISTACOM_H
 #define TLISTACOM_H
 #include "tvectorcom.h"
+
+class TListaCom; //Para decirle al compilador que existe esta clase, si no, me da error en ostream en TListaCom.
+
 class TListaNodo
 {
     //Permite a la clase TListaPos acceder a los atributos privados de esta clase
     friend class TListaPos;
     friend class TListaCom;
-    //Para poder leer siguiente y complejos en TListaCom
-    friend ostream& operator<<(ostream& os, const TListaCom& lista);
     private:
     //Elemento del nodo
     TComplejo e;
@@ -18,7 +19,7 @@ class TListaNodo
     // :e() incializador de objeto, llama al constructor de TComplejo, si no se pone se llama al defecto de TComplejo
     //No se hace dentro de las llaves porque se llamaría dos veces, el compilador sabe que es una composición (dentro de ListaNodo hay Tcomplejos)
     //EN el destructor no hace falta :e(), lo hace bien directamente, no llama 2 veces
-    
+    public:
     //Constructor por defecto 
     TListaNodo();
     //CREADO POR MÍ, para método InsCabeza
@@ -35,7 +36,10 @@ class TListaNodo
 class TListaPos
 {
     friend class TListaCom;
+    friend ostream & operator<<(ostream &, const TListaCom &);
     TListaNodo *pos;
+
+    public:
     //Cosntrucor por defecto
     TListaPos();
     //Copia
@@ -66,16 +70,20 @@ class TListaCom
     // Ultimo elemento de la lista
     TListaNodo *ultimo;
 
+    //Limpiar toda la memoria
+    void Destructor();
+    //Clonar una lista
+    void Clonador(const TListaCom&);
+    // Devuelve la posición dónde está el complejo
+    TListaPos BuscarPos(const TComplejo &);
+
+    public:
     // Constructor por defecto
     TListaCom ();
     // Constructor de copia
     TListaCom (const TListaCom &);
     // Destructor
     ~TListaCom ();
-    //Limpiar toda la memoria
-    void Destructor();
-    //Clonar una lista
-    void Clonador(const TListaCom&);
     // Sobrecarga del operador asignación
     TListaCom & operator=(const TListaCom &);
     // Sobrecarga del operador igualdad
@@ -105,8 +113,6 @@ class TListaCom
     TComplejo Obtener(const TListaPos &) const;
     // Devuelve true si el elemento está en la lista, false en caso contrario
     bool Buscar(const TComplejo &) const;
-    // Devuelve la posición dónde está el complejo
-    TListaPos BuscarPos(const TComplejo &);
     // Devuelve la longitud de la lista
     int Longitud() const;
     // Devuelve la primera posición en la lista
@@ -119,4 +125,4 @@ class TListaCom
     friend ostream & operator<<(ostream &, const TListaCom &);
 };
 
-#endif;
+#endif
