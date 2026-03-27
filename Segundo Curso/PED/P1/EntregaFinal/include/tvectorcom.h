@@ -36,7 +36,7 @@ int Tamano();
 // Cantidad de posiciones OCUPADAS (TComplejo NO VACIO) en el vector
 int Ocupadas();
 // Devuelve TRUE si existe el TComplejo en el vector
-bool ExisteCom(const TComplejo &) const;
+bool ExisteCom(const TComplejo &);
 // Mostrar por pantalla los elementos TComplejo del vector con PARTE REAL IGUAl
 //O POSTERIOR al argumento
 void MostrarComplejos(double);

@@ -171,17 +171,6 @@ bool TVectorCom::Redimensionar(int dim)
     return true;
 }
 
-bool TVectorCom::ExisteCom(const TComplejo & com) 
-{
-    //Se llama al constructor si está declarado como const
-    //Recorrer el vector buscando el complejo, si lo encuentra, true
-    for (int i = 0; i < tamano; i++)
-    {
-        if (c[i] == com) return true
-    }
-    return false
-}
-
 ostream & operator<<(ostream & os, TVectorCom & vector) {
     os << "[";
     for (int i = 0; i < vector.tamano; i++){
