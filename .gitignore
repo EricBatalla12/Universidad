@@ -80,3 +80,6 @@ compiled/
 
 #Comprimibles
 *tar.*
+
+#Para PED
+*.debug

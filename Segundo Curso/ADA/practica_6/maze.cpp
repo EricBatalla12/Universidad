@@ -7,24 +7,116 @@
 #include <algorithm>
 using namespace std;
 
-// 1. Versión recursiva ingenua
-int maze_naive(/* parámetros */);
-
-// 2. Versión recursiva con memoización
-int maze_memo(/* parámetros */);
-
-// 3. Iterativo con matriz
-int maze_it_matrix(/* parámetros */);
-
-// 4. Iterativo con vector (espacio optimizado)
-int maze_it_vector(/* parámetros */);
-
-// 5. Reconstructor del camino
-void maze_parser(/* parámetros */);
 
 void print_usage() {
     cerr << "Usage:" << endl;
     cerr << "maze [--p2D] [-t] [--ignore-naive] -f file" << endl;
+}
+
+bool cargar_laberinto(const string& filename, vector<vector<int>>& maze, int& n, int& m) {
+    ifstream file(filename);
+    
+    // Si el archivo no se pudo abrir, devolvemos false
+    if (!file.is_open()) {
+        return false;
+    }
+
+    // Leemos la primera línea: número de filas (n) y columnas (m)
+    file >> n >> m;
+
+    // Redimensionamos la matriz para que tenga tamaño n x m
+    maze.assign(n, vector<int>(m));
+
+    // Leemos los 0s y 1s
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            file >> maze[i][j];
+        }
+    }
+
+    file.close();
+    return true;
+}
+
+int maze_naive(
+    const vector<vector<int>> &maze,
+    int fila_actual,                           
+    int columna_actual,                           
+    int total_filas,                           
+    int total_columnas                         
+) {
+    //Caso base en caso de salirse del laberinto o no llegar a la salida
+    if( fila_actual >= total_filas || columna_actual >= total_columnas || maze[fila_actual][columna_actual] == 0 )
+        return numeric_limits<int>::max();
+
+    // Caso base de éxito
+    // Si llegamos a la casilla de destino (n-1, m-1)
+    if( fila_actual == total_filas - 1 && columna_actual == total_columnas - 1 )
+        return 1;  // Un camino de una sola casilla tiene longitud 1
+
+    //derecha
+    int S1 = maze_naive( maze, fila_actual, columna_actual + 1, total_filas, total_columnas );
+
+    //Abajo
+    int S2 = maze_naive( maze, fila_actual + 1, columna_actual, total_filas, total_columnas );
+
+    //Diagonal
+    int S3 = maze_naive( maze, fila_actual + 1, columna_actual + 1, total_filas, total_columnas );
+
+    //Mejor camino
+    int best = min({S1, S2, S3});
+
+    //Si el mejor es infinito, el camino no tiene salida
+    if( best == numeric_limits<int>::max() )
+        return numeric_limits<int>::max();
+
+    // Sumamos 1 por la casilla actual
+    return 1 + best;
+}
+
+// Constante para saber qué casillas no hemos visitado aún
+const int SENTINEL = -1;
+
+// --- 2. VERSIÓN RECURSIVA CON MEMOIZACIÓN ---
+
+int maze_memo(
+    vector<vector<int>> &M,
+    const vector<vector<int>> &maze, 
+    int r, int c, int n, int m
+) {
+    // Si nos salimos del laberinto o la casilla es inaccesible (0)
+    // Devolvemos "infinito" pero NO lo guardamos en la tabla (no es una celda válida)
+    if( r >= n || c >= m || maze[r][c] == 0 )
+        return numeric_limits<int>::max();
+
+    // 1. Si la solución ya es conocida, retornarla (como en tu diapositiva)
+    if( M[r][c] != SENTINEL ) 
+        return M[r][c];
+
+    // Caso base de éxito
+    if( r == n - 1 && c == m - 1 )
+        return M[r][c] = 1;
+
+    // Llamadas recursivas (S1, S2, S3)
+    int S1 = maze_memo( M, maze, r, c + 1, n, m );
+    int S2 = maze_memo( M, maze, r + 1, c, n, m );
+    int S3 = maze_memo( M, maze, r + 1, c + 1, n, m );
+
+    int best = min({S1, S2, S3});
+
+    // 2. Almacenar y retornar la solución
+    if( best == numeric_limits<int>::max() )
+        return M[r][c] = numeric_limits<int>::max(); // Marcamos como camino sin salida
+        
+    return M[r][c] = 1 + best;
+}
+
+// -----------------------------------------------------------------
+// Función "envoltorio" para inicializar la matriz (como en la diapositiva)
+int maze_memo(const vector<vector<int>> &maze, int n, int m, vector<vector<int>> &M) {
+    // Inicializamos la matriz M con el tamaño n x m y rellena de SENTINEL (-1)
+    M.assign(n, vector<int>(m, SENTINEL)); 
+    return maze_memo(M, maze, 0, 0, n, m);
 }
 
 int main(int argc, char* argv[]) {
@@ -72,6 +164,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    //CÁLCULO DE RESULTADOS
    int n, m;
     vector<vector<int>> maze;
 
@@ -99,72 +192,37 @@ int main(int argc, char* argv[]) {
         cout << "- ";
     }
 
-    // Como para la entrega 1 las demás funciones aún no están terminadas, 
-    // el PDF dice que imprimamos "?"
-    cout << "? ? ?" << endl;
+   vector<vector<int>> M; // Creamos la matriz de memoria vacía
+    int resultado_memo = maze_memo(maze, n, m, M); // Llamamos al envoltorio
+    
+    if (resultado_memo == numeric_limits<int>::max()) {
+        cout << "0 ";
+    } else {
+        cout << resultado_memo << " ";
+    }
+    
+    // Imprimimos '?' para las dos iterativas que faltan (Entrega 2)
+    cout << "? ?" << endl;
+
+    // --- IMPRESIÓN DE TABLAS (Opción -t) ---
+    if (usa_t) {
+        cout << "Memoization table:" << endl;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                // Formateamos la salida según las normas del PDF
+                if (M[i][j] == SENTINEL) {
+                    cout << "- ";
+                } else if (M[i][j] == numeric_limits<int>::max()) {
+                    cout << "X ";
+                } else {
+                    cout << M[i][j] << " ";
+                }
+            }
+            cout << endl; // Salto de línea al acabar la fila
+        }
+        // Nota: La "Iterative table" la haremos en la Entrega 2.
+    }
 
     return 0;
 }
 
-bool cargar_laberinto(const string& filename, vector<vector<int>>& maze, int& n, int& m) {
-    ifstream file(filename);
-    
-    // Si el archivo no se pudo abrir, devolvemos false
-    if (!file.is_open()) {
-        return false;
-    }
-
-    // Leemos la primera línea: número de filas (n) y columnas (m)
-    file >> n >> m;
-
-    // Redimensionamos la matriz para que tenga tamaño n x m
-    maze.assign(n, vector<int>(m));
-
-    // Leemos los 0s y 1s
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            file >> maze[i][j];
-        }
-    }
-
-    file.close();
-    return true;
-}
-
-using namespace std;
-
-int maze_naive(
-    const vector<vector<int>> &maze,
-    int fila_actual,                           
-    int columna_actual,                           
-    int total_filas,                           
-    int total_columnas                         
-) {
-    //Caso base en caso de salirse del laberinto o no llegar a la salida
-    if( fila_actual >= total_filas || columna_actual >= total_columnas || maze[fila_actual][columna_actual] == 0 )
-        return numeric_limits<int>::max();
-
-    // Caso base de éxito
-    // Si llegamos a la casilla de destino (n-1, m-1)
-    if( fila_actual == total_filas - 1 && columna_actual == total_columnas - 1 )
-        return 1;  // Un camino de una sola casilla tiene longitud 1
-
-    //derecha
-    int S1 = maze_naive( maze, fila_actual, columna_actual + 1, total_filas, total_columnas );
-
-    //Abajo
-    int S2 = maze_naive( maze, fila_actual + 1, columna_actual, total_filas, total_columnas );
-
-    //Diagonal
-    int S3 = maze_naive( maze, fila_actual + 1, columna_actual + 1, total_filas, total_columnas );
-
-    //Mejor camino
-    int best = min({S1, S2, S3});
-
-    //Si el mejor es infinito, el camino no tiene salida
-    if( best == numeric_limits<int>::max() )
-        return numeric_limits<int>::max();
-
-    // Sumamos 1 por la casilla actual
-    return 1 + best;
-}
