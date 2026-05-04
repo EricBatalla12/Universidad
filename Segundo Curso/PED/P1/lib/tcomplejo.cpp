@@ -82,9 +82,13 @@ TComplejo TComplejo::operator-(double real)
     return temp;
 }
 
+//Me he dado cuenta que no puedo llamar a operator* porque se comporta de manera distinta la multiplación,
+//se debe multiplicar ambos números por el real que entra como parámetro.
 TComplejo TComplejo::operator*(double real)
 {
-    TComplejo temp = operator*(TComplejo(real));
+    TComplejo temp;
+    temp.re = this->re * real;
+    temp.im = this->im * real;
     return temp;
 }
 

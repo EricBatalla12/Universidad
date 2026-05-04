@@ -44,7 +44,7 @@ void MostrarComplejos(double);
 bool Redimensionar(int);
 
 // Sobrecarga del operador salida
-friend ostream & operator<<(ostream &, TVectorCom &);
+friend ostream & operator<<(ostream &, const TVectorCom &);
 };
 
 

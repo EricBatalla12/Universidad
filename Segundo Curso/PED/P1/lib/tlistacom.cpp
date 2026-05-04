@@ -378,6 +378,7 @@ bool TListaCom::Borrar(const TComplejo& complejo)
 //No es constante ya que se va a modificar, se elimina
 bool TListaCom::Borrar(TListaPos& posicion)
 {
+    if (posicion.pos == NULL) return false; //Se evita un Segmentation fault al intentar acceder a un NULL
     //Solo hay un elemento
     if (this->primero == posicion.pos && this->ultimo == posicion.pos)
     {

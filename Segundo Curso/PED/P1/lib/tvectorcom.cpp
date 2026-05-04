@@ -130,7 +130,7 @@ int TVectorCom::Ocupadas()
 
 void TVectorCom::MostrarComplejos(double real)
 {
-    int ultimo = 0;
+    int ultimo = -1; //Por si el vector está vacío para que no entre en el segundo bucle e intente imprimir y haga un segmentation fault
     for (int i = 0; i < tamano; i++)
     {
         if (c[i].Re() >= real) ultimo = i;
@@ -158,31 +158,37 @@ bool TVectorCom::Redimensionar(int dim)
     if (dim == tamano) return false;
     if (dim > tamano)
     {
-        TComplejo *aux = c;
-        c = new TComplejo[dim];
-        for (int i = 0; i < tamano; i++) c[i] = aux[i];
+        TComplejo *aux = c; //Copio dirección de memoria de mi array actual
+        c = new TComplejo[dim]; //Hago que c ahora sea un array vacío de tamaño dim con TComplejos creados por defecto
+        for (int i = 0; i < tamano; i++) c[i] = aux[i]; //Igualo los valores
+        delete [] aux; //liberar la memoria ocupada por aux
+        aux = NULL; //Por si acaso
+        this->tamano = dim; //Nuevo tamaño del vector para imprimirlo o guardar su nuevo tamaño
     } else {
-        for (int i = dim; i < tamano; i++)
-        {
-            c[i].Re(0);
-            c[i].Im(0);
-        }
+        //EN CASO DE REDIMENSIONAR hay que hacer el array más pequeño, antes dejaba los valore a 0 pero no sirve
+
+        TComplejo *aux = c; //Copio dirección de memoria de mi array actual
+        c = new TComplejo[dim]; //Hago que c ahora sea un array vacío de tamaño dim con TComplejos creados por defecto
+        for (int i = 0; i < dim; i++) c[i] = aux[i]; //Igualo los valores copiando solo los primeros dim elementos
+        delete [] aux;
+        aux = NULL;
+        this->tamano = dim; //Nuevo tamaño del vector para imprimirlo
     }
     return true;
 }
 
-bool TVectorCom::ExisteCom(const TComplejo & com) 
+bool TVectorCom::ExisteCom(const TComplejo & com) const
 {
     //Se llama al constructor si está declarado como const
     //Recorrer el vector buscando el complejo, si lo encuentra, true
     for (int i = 0; i < tamano; i++)
     {
-        if (c[i] == com) return true
+        if (c[i] == com) return true;
     }
-    return false
+    return false;
 }
 
-ostream & operator<<(ostream & os, TVectorCom & vector) {
+ostream & operator<<(ostream & os, const TVectorCom & vector) {
     os << "[";
     for (int i = 0; i < vector.tamano; i++){
         os << "(" << i+1 << ") " << vector.c[i];
