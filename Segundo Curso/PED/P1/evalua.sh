@@ -8,7 +8,7 @@ for FILE in *PRUEBA/tad*.cpp ; do
 	
 	cp $FILE src/tad.cpp 
         rm -f ./tad
-	mingw32-make
+	make
 	./tad > $FILE.out
 	diff -b -B -i $FILE.out $FILE.sal
 	if [ "$?" == "0" ]; then

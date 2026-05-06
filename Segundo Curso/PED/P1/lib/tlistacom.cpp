@@ -317,6 +317,7 @@ bool TListaCom::InsCabeza(const TComplejo& complejo)
     return true;
 }
 
+//Insertar nuevo nodo por la izquierda
 bool TListaCom::InsertarI(const TComplejo& complejo, const TListaPos& posicion)
 {
     //Puedo usar esta función ya que EsVacia() es const
@@ -340,6 +341,7 @@ bool TListaCom::InsertarI(const TComplejo& complejo, const TListaPos& posicion)
     return true;
 }
 
+//Insertar nuevo nodo por la derecha
 bool TListaCom::InsertarD(const TComplejo& complejo, const TListaPos& posicion)
 {
     if (posicion.EsVacia()) return false;

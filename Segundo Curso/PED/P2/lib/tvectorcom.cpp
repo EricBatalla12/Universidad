@@ -91,8 +91,8 @@ bool TVectorCom::operator!=(const TVectorCom & other)
     return false;
 }
 
-//Parte izquierda, devuelve la zona de memoria y le asigna el TComplejo de la derecha v[2] = b
-TComplejo& TVectorCom::operator[](int dim) //No tiene const ya que se modifica el vector
+//Parte izquierda, devuelve la zona de memoria y le asigna el TComplejo de la derecha
+TComplejo& TVectorCom::operator[](int dim)
 {
     if (dim > 0 && dim <= tamano) return c[dim - 1];
     return error; //devuelve un TComplejo ya generado por defecto (0,0)
@@ -101,9 +101,8 @@ TComplejo& TVectorCom::operator[](int dim) //No tiene const ya que se modifica e
     
 }
 
-//Parte derecha b = c[2]
-//Se devuelve una copia del objeto original (valor), no la zona de memoria, esto es para proteger el vector.
-TComplejo TVectorCom::operator[](int dim) const //No se modifica el vector, puede ser const
+//Parte derecha
+TComplejo TVectorCom::operator[](int dim) const
 {
      if (dim > 0 && dim <= tamano) return c[dim - 1];
     return error; //Aquí se crea una variable temporal ya que se va a devolver
@@ -116,7 +115,6 @@ int TVectorCom::Tamano()
     return tamano;
 }
 
-//Posiciones el vector ocupadas
 int TVectorCom::Ocupadas()
 {
     int ocupadas = 0;
@@ -132,7 +130,7 @@ int TVectorCom::Ocupadas()
 
 void TVectorCom::MostrarComplejos(double real)
 {
-    int ultimo = -1; //Por si el vector está vacío para que no entre en el segundo bucle e intente imprimir y haga un segmentation fault
+    int ultimo = 0;
     for (int i = 0; i < tamano; i++)
     {
         if (c[i].Re() >= real) ultimo = i;
@@ -160,26 +158,20 @@ bool TVectorCom::Redimensionar(int dim)
     if (dim == tamano) return false;
     if (dim > tamano)
     {
-        TComplejo *aux = c; //Copio dirección de memoria de mi array actual
-        c = new TComplejo[dim]; //Hago que c ahora sea un array vacío de tamaño dim con TComplejos creados por defecto
-        for (int i = 0; i < tamano; i++) c[i] = aux[i]; //Igualo los valores
-        delete [] aux; //liberar la memoria ocupada por aux
-        aux = NULL; //Por si acaso
-        this->tamano = dim; //Nuevo tamaño del vector para imprimirlo o guardar su nuevo tamaño
+        TComplejo *aux = c;
+        c = new TComplejo[dim];
+        for (int i = 0; i < tamano; i++) c[i] = aux[i];
     } else {
-        //EN CASO DE REDIMENSIONAR hay que hacer el array más pequeño, antes dejaba los valore a 0 pero no sirve
-
-        TComplejo *aux = c; //Copio dirección de memoria de mi array actual
-        c = new TComplejo[dim]; //Hago que c ahora sea un array vacío de tamaño dim con TComplejos creados por defecto
-        for (int i = 0; i < dim; i++) c[i] = aux[i]; //Igualo los valores copiando solo los primeros dim elementos
-        delete [] aux;
-        aux = NULL;
-        this->tamano = dim; //Nuevo tamaño del vector para imprimirlo
+        for (int i = dim; i < tamano; i++)
+        {
+            c[i].Re(0);
+            c[i].Im(0);
+        }
     }
     return true;
 }
 
-bool TVectorCom::ExisteCom(const TComplejo & com) const
+bool TVectorCom::ExisteCom(const TComplejo & com) 
 {
     //Se llama al constructor si está declarado como const
     //Recorrer el vector buscando el complejo, si lo encuentra, true

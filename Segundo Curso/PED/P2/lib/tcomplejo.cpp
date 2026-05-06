@@ -34,7 +34,6 @@ TComplejo& TComplejo::operator=(const TComplejo& other)
 {
     //Comprobar que el objeto no sea él mismo para que no se autodestruya
     //other se pasa por referencia para comparar punteros, ya que this es la refencia del objeto
-    //Basicamente si this y &other apuntan al mimso sitio son el mismo objeto
     if (this != &other)
     {
         re = other.re;
@@ -42,11 +41,10 @@ TComplejo& TComplejo::operator=(const TComplejo& other)
     }
     //Se devuelve *this para  asiganciones múltiples 
     //No se crea una copia del objeto ya que TComplejo& hace que se devuelva una referencia 
-    //Al hacer *this se devuelve el contenido del objeto
     return *this;
 }
 
-TComplejo TComplejo::operator+(const TComplejo& complejo) const 
+TComplejo TComplejo::operator+(const TComplejo& complejo) 
 {
     //Se declara el objeto directamente, no es un puntero
     TComplejo temp; 
@@ -56,7 +54,7 @@ TComplejo TComplejo::operator+(const TComplejo& complejo) const
     return temp;
 }
 
-TComplejo TComplejo::operator-(const TComplejo& complejo) const
+TComplejo TComplejo::operator-(const TComplejo& complejo)
 {
     TComplejo temp; 
     temp.re = this->re - complejo.re;
@@ -64,7 +62,7 @@ TComplejo TComplejo::operator-(const TComplejo& complejo) const
     return temp;
 }
 
-TComplejo TComplejo::operator*(const TComplejo& complejo) const
+TComplejo TComplejo::operator*(const TComplejo& complejo)
 {
     TComplejo temp; 
     temp.re = this->re * complejo.re;
@@ -72,29 +70,25 @@ TComplejo TComplejo::operator*(const TComplejo& complejo) const
     return temp;
 }
 
-TComplejo TComplejo::operator+(double real) const
+TComplejo TComplejo::operator+(double real)
 {
     TComplejo temp = operator+(TComplejo(real)); 
     return temp;
 }
 
-TComplejo TComplejo::operator-(double real) const
+TComplejo TComplejo::operator-(double real)
 {
     TComplejo temp = operator-(TComplejo(real));
     return temp;
 }
 
-//Me he dado cuenta que no puedo llamar a operator* porque se comporta de manera distinta la multiplación,
-//se debe multiplicar ambos números por el real que entra como parámetro.
-TComplejo TComplejo::operator*(double real) const
+TComplejo TComplejo::operator*(double real)
 {
-    TComplejo temp;
-    temp.re = this->re * real;
-    temp.im = this->im * real;
+    TComplejo temp = operator*(TComplejo(real));
     return temp;
 }
 
-bool TComplejo::operator== (const TComplejo& other) const
+bool TComplejo::operator== (const TComplejo& other)
 {
     if ((this == &other) || (re == other.re && im == other.im))
     {
@@ -105,19 +99,26 @@ bool TComplejo::operator== (const TComplejo& other) const
     }
 }
 
-bool TComplejo::operator!= (const TComplejo& other) const
+bool TComplejo::operator!= (const TComplejo& other)
 {
-    return !operator==(other);
+    //Se pasan por valor para comparar re e im, no las direcciones de memoria
+    if (*this == other)
+    {
+        return false;
+    } else 
+    {
+        return true;
+    }
 }
 
-double TComplejo::Arg() const
+double TComplejo::Arg()
 {
     //atan2 gestiona la división por 0 y devuelve un ángulo en el rango [-pi, pi]
     double a = atan2(im, re);
     return a;
 }
 
-double TComplejo::Mod() const
+double TComplejo::Mod()
 {
     double m = sqrt(pow(re, 2) + pow(im, 2));
     return m;
@@ -151,6 +152,21 @@ TComplejo operator* (double real, const TComplejo& complejo)
     temp.re = real * complejo.re; 
     temp.im = real * complejo.im;
     return temp;
+}
+
+bool TComplejo::operator<(const TComplejo &other) const
+{
+    // Ejemplo: comparando por la parte real, y si son iguales, por la imaginaria
+    if (this->re < other.re) return true;
+    if (this->re == other.re && this->im < other.im) return true;
+    return false;
+}
+
+bool TComplejo::operator>(const TComplejo &other) const
+{
+    if (this->re > other.re) return true;
+    if (this->re == other.re && this->im > other.im) return true;
+    return false;
 }
 
 

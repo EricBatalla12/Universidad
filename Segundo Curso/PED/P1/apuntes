@@ -1,0 +1,11 @@
+VALGRIND
+l1 = {(3 4) (2 3) (1 0) (0 0)}
+l1 = {(3 4) (2 3) (1 0) (0 0)}
+Salida del tad
+
+total heap usage: 6 allocs, 6 frees, 74,880 bytes allocated 
+6 news 6 deletes
+
+==1618== in use at exit: 0 bytes in 0 blocks
+==1618== All heap blocks were freed -- no leaks are possible
+0 memoria colgando, no hay fugas

@@ -1,4 +1,4 @@
-#ifndef TLISTACOM_H
+#ifndef TLISTACOM_H //Es para evitar que se defina varias veces y de error de compilación
 #define TLISTACOM_H
 #include "tvectorcom.h"
 
@@ -23,9 +23,10 @@ class TListaNodo
     //Constructor por defecto 
     TListaNodo();
     //CREADO POR MÍ, para método InsCabeza
-    TListaNodo(const TComplejo&);
+    TListaNodo(const TComplejo&); //Paso por referencia "&" el TComplejo porque es un objeto grande y pasarlo por valor sería muy pesado, así que paso su direeción de memoria
+                                  //Además lo paso const para prometer que no lo voy a modificar, solo leer
     //Copia
-    TListaNodo(const TListaNodo&);
+    TListaNodo(const TListaNodo&); //Pasar el Nodo por valor daría una recursividad infinita, ya que se llamaría al CP todo el rato
     //Destructor
     ~TListaNodo();
     //Sobrecarga operador asiganción
